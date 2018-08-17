@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-import time
 import pymysql.cursors
 import configparser
 import logging
+from time import sleep
 from prometheus_client import start_http_server, Gauge
 
 class Configuration:
@@ -151,6 +151,6 @@ if __name__ == '__main__':
           gauge.labels(users['User'],users["Host"], users["DB"], permission[0]).set(permission[1])
         counter += 1  
       del MySQLStats
-      time.sleep(int(config.GetWebServerConfiguration()['refresh']))
+      sleep(int(config.GetWebServerConfiguration()['refresh']))
   finally:
     db.close()
