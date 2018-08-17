@@ -3,6 +3,7 @@
 import time
 import pymysql.cursors
 import configparser
+import logging
 from prometheus_client import start_http_server, Gauge
 
 class Configuration:
@@ -40,7 +41,8 @@ class MySQLUserInformation:
     self.users = []
     self.GetMySQLUserData()
 
-  def ConvertCharToInt(self, character):
+  @staticmethod
+  def ConvertCharToInt(character):
     if character == 'Y':
       return 1
     else:
@@ -106,7 +108,8 @@ class MySQLUserInformation:
 
 if __name__ == '__main__':
   config = Configuration()
- 
+  
+  # If you connect via localhost or 127.0.0.1, you need to use a socket.
   try:
     if config.GetMySQLConfiguration()['mysql_use_socket'] == "True":
       db = pymysql.connect  ( 
@@ -126,10 +129,10 @@ if __name__ == '__main__':
                               db       = "mysql" 
                             )
   except:
-    print("Error connecting to database at {}".format(config.GetMySQLConfiguration()['mysql_hostname']))
+    logging.error("Error connecting to database at {}".format(config.GetMySQLConfiguration()['mysql_hostname']))
     exit(1)
 
-  print("Database connection successful")
+  logging.info("Database connection successful")
 
   start_http_server(int(config.GetWebServerConfiguration()['webserver_port']))
   
